@@ -18,6 +18,7 @@ import AdminDashboard from "../pages/admin/Dashboard";
 import AdminUsuarios from "../pages/admin/Usuarios";
 import AdminTurmas from "../pages/admin/Turmas";
 import AdminAtividades from "../pages/admin/Atividades";
+import AdminCriarAtividade from "../pages/admin/CriarAtividade";
 import AdminRespostasAtividade from "../pages/admin/RespostasAtividade";
 import AdminRespostas from "../pages/admin/Respostas";
 
@@ -46,6 +47,7 @@ export default function AppRoutes() {
                 <Route path="/admin/usuarios" element={<ProtectedRoute requireAdmin><AdminUsuarios /></ProtectedRoute>} />
                 <Route path="/admin/turmas" element={<ProtectedRoute requireAdmin><AdminTurmas /></ProtectedRoute>} />
                 <Route path="/admin/atividades" element={<ProtectedRoute requireAdmin><AdminAtividades /></ProtectedRoute>} />
+                <Route path="/admin/atividades/criar" element={<ProtectedRoute requireAdmin><AdminCriarAtividade /></ProtectedRoute>} />
                 <Route path="/admin/atividades/:id/respostas" element={<ProtectedRoute requireAdmin><AdminRespostasAtividade /></ProtectedRoute>} />
                 <Route path="/admin/respostas" element={<ProtectedRoute requireAdmin><AdminRespostas /></ProtectedRoute>} />
 

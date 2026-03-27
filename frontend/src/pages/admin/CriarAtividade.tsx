@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../../components/Layout";
+import AdminLayout from "../../components/AdminLayout";
 import { useCriarAtividade, useTurmas } from "../../hooks/useAtividades";
 import { useForm } from "@tanstack/react-form";
 import { criarAtividadeSchema } from "@/schemas/forms";
@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import TurmaMultiSelect from "@/components/TurmaMultiSelect";
 
-export default function CriarAtividade() {
+export default function AdminCriarAtividade() {
     const navigate = useNavigate();
     const { mutate: criarAtividade, isPending } = useCriarAtividade();
     const { data: turmas = [], isLoading: carregandoTurmas } = useTurmas();
@@ -30,24 +30,24 @@ export default function CriarAtividade() {
             }
             setFieldErrors({});
             criarAtividade({ titulo: value.titulo, descricao: value.descricao, data_entrega: new Date(value.data_entrega).toISOString(), turma: value.turma });
-            setTimeout(() => navigate("/professor"), 1000);
+            setTimeout(() => navigate("/admin/atividades"), 1000);
         },
     });
 
     const clearError = (name: string) => setFieldErrors((p) => ({ ...p, [name]: "" }));
 
     return (
-        <Layout>
+        <AdminLayout>
             <div className="max-w-2xl mx-auto space-y-4">
-                <Button variant="ghost" size="sm" onClick={() => navigate("/professor")}><ArrowLeft className="w-4 h-4 mr-2" />Voltar</Button>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/admin/atividades")}><ArrowLeft className="w-4 h-4 mr-2" />Voltar</Button>
                 <Card>
                     <CardHeader><CardTitle className="text-2xl">Criar Nova Atividade</CardTitle></CardHeader>
                     <CardContent>
                         <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }} className="space-y-4">
                             <form.Field name="titulo">{(field) => (
                                 <div className="space-y-2">
-                                    <Label>Titulo</Label>
-                                    <Input placeholder="Titulo da atividade" value={field.state.value}
+                                    <Label>Título</Label>
+                                    <Input placeholder="Título da atividade" value={field.state.value}
                                         onChange={(e) => { field.handleChange(e.target.value); clearError("titulo"); }}
                                         onBlur={field.handleBlur} disabled={isPending}
                                         className={fieldErrors.titulo ? "border-destructive" : ""} />
@@ -57,8 +57,8 @@ export default function CriarAtividade() {
 
                             <form.Field name="descricao">{(field) => (
                                 <div className="space-y-2">
-                                    <Label>Descricao</Label>
-                                    <Textarea placeholder="Descricao da atividade" value={field.state.value}
+                                    <Label>Descrição</Label>
+                                    <Textarea placeholder="Descrição da atividade" value={field.state.value}
                                         onChange={(e) => { field.handleChange(e.target.value); clearError("descricao"); }}
                                         onBlur={field.handleBlur} disabled={isPending}
                                         className={`min-h-[120px] ${fieldErrors.descricao ? "border-destructive" : ""}`} />
@@ -91,12 +91,12 @@ export default function CriarAtividade() {
                                 <Button type="submit" className="flex-1" disabled={isPending}>
                                     {isPending ? <><Loader2 className="w-4 h-4 animate-spin" />Criando...</> : "Criar Atividade"}
                                 </Button>
-                                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/professor")}>Cancelar</Button>
+                                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/admin/atividades")}>Cancelar</Button>
                             </div>
                         </form>
                     </CardContent>
                 </Card>
             </div>
-        </Layout>
+        </AdminLayout>
     );
 }

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryState, parseAsInteger, parseAsString } from "nuqs";
 import AdminLayout from "../../components/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
-import { adminGetTodasRespostas } from "../../services/admin.service";
+import { adminGetTodasRespostas, adminGetAtividades } from "../../services/admin.service";
 import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,28 +16,34 @@ export default function AdminRespostas() {
     const navigate = useNavigate();
     const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""));
     const [status, setStatus] = useQueryState("status", parseAsString.withDefault(""));
+    const [atividade, setAtividade] = useQueryState("atividade", parseAsString.withDefault(""));
     const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
     const params: Record<string, string> = { page: String(page) };
     if (search) params.search = search;
     if (status) params.status = status;
+    if (atividade) params.atividade = atividade;
 
     const { data, isLoading } = useQuery({ queryKey: ["admin-todas-respostas", params], queryFn: () => adminGetTodasRespostas(params) });
+    const { data: atvData } = useQuery({ queryKey: ["admin-atividades-all"], queryFn: () => adminGetAtividades({ page_size: "100" }) });
+
     const respostas = data?.results ?? [];
     const count = data?.count ?? 0;
+    const atividadesOptions = (atvData?.results ?? []).map((a) => ({ value: String(a.id), label: a.titulo }));
 
     return (
         <AdminLayout>
             <div className="max-w-7xl mx-auto space-y-6">
-                <div><h1 className="text-3xl font-bold">Respostas</h1><p className="text-muted-foreground mt-1">Todas as respostas do sistema</p></div>
+                <div><h1 className="text-3xl font-bold">Respostas</h1><p className="text-muted-foreground mt-1">Todas as respostas enviadas no sistema</p></div>
                 <SearchFilter
                     search={search}
                     onSearchChange={(v) => { setSearch(v); setPage(1); }}
                     placeholder="Buscar por aluno ou atividade..."
                     selects={[
                         { key: "status", label: "Todos os status", value: status, options: [{ value: "corrigida", label: "Corrigida" }, { value: "pendente", label: "Pendente" }], onChange: (v) => { setStatus(v); setPage(1); } },
+                        { key: "atividade", label: "Todas as atividades", value: atividade, options: atividadesOptions, onChange: (v) => { setAtividade(v); setPage(1); } },
                     ]}
-                    onClear={() => { setSearch(""); setStatus(""); setPage(1); }}
+                    onClear={() => { setSearch(""); setStatus(""); setAtividade(""); setPage(1); }}
                 />
                 <Card>
                     <CardHeader className="flex-row items-center gap-3 space-y-0"><MessageSquare className="w-5 h-5 text-primary" /><CardTitle>Respostas</CardTitle><Badge variant="secondary" className="ml-auto">{count}</Badge></CardHeader>
@@ -49,7 +55,7 @@ export default function AdminRespostas() {
                         ) : (
                             <>
                                 <Table>
-                                    <TableHeader><TableRow><TableHead>Aluno</TableHead><TableHead>Atividade</TableHead><TableHead>Resposta</TableHead><TableHead>Nota</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Acoes</TableHead></TableRow></TableHeader>
+                                    <TableHeader><TableRow><TableHead>Aluno</TableHead><TableHead>Atividade</TableHead><TableHead>Resposta</TableHead><TableHead>Nota</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Ações</TableHead></TableRow></TableHeader>
                                     <TableBody>
                                         {respostas.map((r: Resposta) => (
                                             <TableRow key={r.id}>

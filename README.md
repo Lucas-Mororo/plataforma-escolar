@@ -24,6 +24,7 @@ Aplicação web fullstack para gerenciamento de atividades escolares. Professore
 |--------|-----------|
 | Backend | Django 4.2+, Django REST Framework, SimpleJWT, PostgreSQL |
 | Frontend | React 19, TypeScript, Vite 8, Tailwind CSS 4, shadcn/ui (base-nova) |
+| Formulários | TanStack Form + Zod (validação com schemas tipados) |
 | Estado | Zustand (auth, theme, toast), React Query (server state) |
 | URL Params | nuqs (search params sincronizados com a URL) |
 | Infra | Docker, Docker Compose |
@@ -31,7 +32,7 @@ Aplicação web fullstack para gerenciamento de atividades escolares. Professore
 ## Pré-requisitos
 
 - Python 3.10+
-- Node.js 18+
+- Node.js 20+ (Vite 8 requer 20.19+)
 - Docker e Docker Compose
 - npm
 
@@ -149,8 +150,9 @@ plataforma-escolar/
 │   │   ├── api/                # Axios config + React Query client
 │   │   ├── components/         # Componentes reutilizáveis + shadcn/ui
 │   │   ├── hooks/              # useAuth, useAtividades, useDebounce, useToast
-│   │   ├── pages/              # admin/ (6), aluno/ (4), professor/ (5), Login, Register
+│   │   ├── pages/              # admin/ (7), aluno/ (4), professor/ (5), Login, Register
 │   │   ├── routes/             # React Router + NuqsAdapter
+│   │   ├── schemas/            # Zod schemas de validação (login, registro, atividade)
 │   │   ├── services/           # Chamadas HTTP (auth, atividade, admin, user, turma)
 │   │   ├── store/              # Zustand (auth, theme, toast)
 │   │   └── types/              # TypeScript interfaces
@@ -213,6 +215,28 @@ Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros especí
 - O campo `is_admin` é calculado como `is_superuser AND is_active`.
 
 > Para decisões técnicas detalhadas (arquitetura, segurança, frontend), veja [docs/decisions.md](docs/decisions.md).
+
+## Decisões Técnicas Resumidas
+
+### Backend
+
+- **Custom User Model** com campo `role` (PROFESSOR/ALUNO) e M2M com Turma
+- **3 níveis de serializers** para User: público (login), privado (/auth/me/), admin-only
+- **Permissões com superuser bypass** — `IsProfessor` e `IsAluno` concedem acesso automático a superusers
+- **Paginação em FBVs** via helper `paginate_queryset()` com formato `{ count, next, previous, results }`
+- **Validação de prazo apenas na criação** — professores corrigem mesmo após prazo
+- **Endpoints admin em /gestao/** para evitar conflito com Django admin nativo
+- **Endpoint /auth/me/stats/** retorna estatísticas calculadas server-side por role
+
+### Frontend
+
+- **TanStack Form + Zod** para formulários — schemas centralizados em `schemas/forms.ts`, validação via `safeParse()` no submit, erros do backend injetados via `onError` da mutation
+- **Zustand** para estado síncrono (auth, theme, toast), **React Query** para server state com cache e invalidação automática
+- **Autenticação server-verified** — `is_admin` nunca exposto no login, obtido via `/auth/me/` a cada reload
+- **nuqs** para filtros sincronizados com a URL (busca, status, página) com debounce de 400ms
+- **shadcn/ui (base-nova)** com tema azul customizado em oklch, dark mode via classe `.dark`
+- **Layouts separados** — professor/aluno têm sidebar própria, admin tem `AdminLayout` dedicado
+- **TurmaMultiSelect** com portal para evitar corte por overflow do Card pai
 
 ## Docker (Produção)
 

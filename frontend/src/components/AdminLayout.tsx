@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/auth.store";
 import { useThemeStore } from "../store/theme.store";
 import { useLogout } from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Sun, Moon, LogOut, LayoutDashboard, Users, GraduationCap, Shield, BookOpen, MessageSquare } from "lucide-react";
+import { Menu, X, Sun, Moon, LogOut, LayoutDashboard, Users, GraduationCap, Shield, BookOpen, MessageSquare, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -19,9 +19,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const navItems = [
         { label: "Painel Geral", path: "/admin", icon: LayoutDashboard },
-        { label: "Usuarios", path: "/admin/usuarios", icon: Users },
+        { label: "Usuários", path: "/admin/usuarios", icon: Users },
         { label: "Turmas", path: "/admin/turmas", icon: GraduationCap },
         { label: "Atividades", path: "/admin/atividades", icon: BookOpen },
+        { label: "Criar Atividade", path: "/admin/atividades/criar", icon: PlusCircle },
         { label: "Respostas", path: "/admin/respostas", icon: MessageSquare },
     ];
 
@@ -34,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <div className="flex items-center gap-2">
                         <Shield className="w-5 h-5 text-primary" />
                         <div>
-                            <h1 className="text-lg font-bold text-primary">Administracao</h1>
+                            <h1 className="text-lg font-bold text-primary">Administração</h1>
                             <p className="text-xs text-muted-foreground">{user?.username}</p>
                         </div>
                     </div>
@@ -78,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
                         <Menu className="w-5 h-5" />
                     </Button>
-                    <h1 className="text-base font-semibold text-primary">Administracao</h1>
+                    <h1 className="text-base font-semibold text-primary">Administração</h1>
                     <div className="w-10" />
                 </div>
                 <div className="p-6">{children}</div>
