@@ -44,7 +44,7 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             const url = error.config?.url || "";
-            if (!url.includes("/auth/me")) {
+            if (!url.includes("/auth/")) {
                 useAuthStore.getState().logout();
                 window.location.href = "/login";
             }

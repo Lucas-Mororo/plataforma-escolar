@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'role', 'turma', 'turmas', 'is_active']
+        fields = ['id', 'username', 'email', 'role', 'turma', 'turmas', 'is_active']
 
 
 class UserMeSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class UserMeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'role', 'turmas', 'is_active', 'is_admin']
+        fields = ['id', 'username', 'email', 'role', 'turmas', 'is_active', 'is_admin']
 
     def get_is_admin(self, obj: User) -> bool:
         return obj.is_superuser and obj.is_active
@@ -37,13 +37,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'role', 'turma']
+        fields = ['id', 'username', 'email', 'password', 'role', 'turma']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data: dict) -> User:
         turmas = validated_data.pop('turma', [])
         user = User(
             username=validated_data['username'],
+            email=validated_data['email'],
             role=validated_data['role'],
             is_active=False,
         )

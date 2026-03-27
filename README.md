@@ -91,13 +91,13 @@ Frontend disponível em `http://localhost:5173`
 
 ### 5. Credenciais de teste (após rodar seed.py)
 
-| Usuário | Senha | Papel |
-|---------|-------|-------|
-| admin | admin123 | Superuser |
-| prof.silva | senha123 | Professor |
-| ana.souza | senha123 | Aluno |
+| Email | Senha | Papel |
+|-------|-------|-------|
+| admin@escola.com | admin123 | Superuser |
+| silva@escola.com | senha123 | Professor |
+| ana.souza@escola.com | senha123 | Aluno |
 
-Todos os usuários criados pelo seed usam senha `senha123`.
+Todos os usuários criados pelo seed usam senha `senha123`. O login é feito por **email + senha**.
 
 ## Variáveis de Ambiente
 
@@ -115,7 +115,7 @@ Todos os usuários criados pelo seed usam senha `senha123`.
 ```
 plataforma-escolar/
 ├── accounts/                   # App de usuários e autenticação
-│   ├── models.py               # User (AbstractUser + role + turma M2M)
+│   ├── models.py               # User (AbstractUser + email login + role + turma M2M)
 │   ├── serializers.py          # UserSerializer, UserMeSerializer, UserAdminSerializer, UserCreateSerializer
 │   ├── views.py                # Login, me, stats, registro, listagem admin, toggle
 │   ├── permissions.py          # IsProfessor, IsAluno (superuser bypass)
@@ -169,7 +169,7 @@ plataforma-escolar/
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
-| POST | /auth/login/ | Login (retorna JWT + dados) |
+| POST | /auth/login/ | Login com email + senha (retorna JWT + dados) |
 | POST | /usuarios/ | Registro (usuário inicia inativo) |
 | GET | /turmas/publico/ | Lista turmas (para registro) |
 | GET | /hello/ | Health check |

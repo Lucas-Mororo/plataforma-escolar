@@ -4,9 +4,9 @@ Documento detalhado sobre as decisões de arquitetura e implementação do proje
 
 ## Backend
 
-### Custom User Model com roles
+### Custom User Model com login por email
 
-O modelo `User` extende `AbstractUser` com campo `role` (PROFESSOR/ALUNO) e relação M2M com `Turma`. Isso permite controle de acesso granular sem tabelas extras. O `default='PROFESSOR'` no role garante que `createsuperuser` funcione sem pedir esse campo.
+O modelo `User` extende `AbstractUser` com `USERNAME_FIELD = 'email'`, campo `role` (PROFESSOR/ALUNO) e relação M2M com `Turma`. O email é único e obrigatório, usado como credencial de login no lugar do username. O `default='PROFESSOR'` no role garante que `createsuperuser` funcione sem pedir esse campo.
 
 ### Três níveis de serializers para User
 

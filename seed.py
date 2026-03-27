@@ -51,19 +51,28 @@ print(f"  {len(turmas)} turmas criadas")
 # ============================================================
 if not User.objects.filter(is_superuser=True).exists():
     print("Criando admin...")
-    admin = User.objects.create_superuser(username="admin", password="admin123", role="PROFESSOR")
-    print("  Admin criado: admin / admin123")
+    admin = User.objects.create_superuser(
+        username="admin", email="admin@escola.com", password="admin123", role="PROFESSOR"
+    )
+    print("  Admin criado: admin@escola.com / admin123")
 else:
     admin = User.objects.filter(is_superuser=True).first()
-    print(f"  Admin ja existe: {admin.username}")
+    print(f"  Admin ja existe: {admin.email}")
 
 # ============================================================
 # PROFESSORES
 # ============================================================
 print("Criando professores...")
+professores_data = [
+    ("prof.silva", "silva@escola.com"),
+    ("prof.santos", "santos@escola.com"),
+    ("prof.oliveira", "oliveira@escola.com"),
+    ("prof.costa", "costa@escola.com"),
+    ("prof.pereira", "pereira@escola.com"),
+]
 professores = []
-for name in ["prof.silva", "prof.santos", "prof.oliveira", "prof.costa", "prof.pereira"]:
-    p = User(username=name, role="PROFESSOR", is_active=True)
+for name, email in professores_data:
+    p = User(username=name, email=email, role="PROFESSOR", is_active=True)
     p.set_password("senha123")
     p.save()
     professores.append(p)
@@ -73,16 +82,31 @@ print(f"  {len(professores)} professores criados")
 # ALUNOS
 # ============================================================
 print("Criando alunos...")
-nomes_alunos = [
-    "ana.souza", "bruno.lima", "carla.dias", "daniel.rocha",
-    "elena.martins", "felipe.alves", "gabriela.costa", "henrique.santos",
-    "isabela.ferreira", "joao.oliveira", "karen.silva", "lucas.pereira",
-    "mariana.gomes", "nicolas.ribeiro", "patricia.araujo", "rafael.mendes",
-    "sabrina.castro", "thiago.barbosa", "vanessa.cardoso", "william.nunes",
+alunos_data = [
+    ("ana.souza", "ana.souza@escola.com"),
+    ("bruno.lima", "bruno.lima@escola.com"),
+    ("carla.dias", "carla.dias@escola.com"),
+    ("daniel.rocha", "daniel.rocha@escola.com"),
+    ("elena.martins", "elena.martins@escola.com"),
+    ("felipe.alves", "felipe.alves@escola.com"),
+    ("gabriela.costa", "gabriela.costa@escola.com"),
+    ("henrique.santos", "henrique.santos@escola.com"),
+    ("isabela.ferreira", "isabela.ferreira@escola.com"),
+    ("joao.oliveira", "joao.oliveira@escola.com"),
+    ("karen.silva", "karen.silva@escola.com"),
+    ("lucas.pereira", "lucas.pereira@escola.com"),
+    ("mariana.gomes", "mariana.gomes@escola.com"),
+    ("nicolas.ribeiro", "nicolas.ribeiro@escola.com"),
+    ("patricia.araujo", "patricia.araujo@escola.com"),
+    ("rafael.mendes", "rafael.mendes@escola.com"),
+    ("sabrina.castro", "sabrina.castro@escola.com"),
+    ("thiago.barbosa", "thiago.barbosa@escola.com"),
+    ("vanessa.cardoso", "vanessa.cardoso@escola.com"),
+    ("william.nunes", "william.nunes@escola.com"),
 ]
 alunos = []
-for i, name in enumerate(nomes_alunos):
-    a = User(username=name, role="ALUNO", is_active=True)
+for i, (name, email) in enumerate(alunos_data):
+    a = User(username=name, email=email, role="ALUNO", is_active=True)
     a.set_password("senha123")
     a.save()
     t = [turmas[i % len(turmas)]]
@@ -91,13 +115,13 @@ for i, name in enumerate(nomes_alunos):
     a.turma.set(t)
     alunos.append(a)
 
-for name in ["novo.aluno1", "novo.aluno2"]:
-    u = User(username=name, role="ALUNO", is_active=False)
+for i, name in enumerate(["novo.aluno1", "novo.aluno2"]):
+    u = User(username=name, email=f"{name}@escola.com", role="ALUNO", is_active=False)
     u.set_password("senha123")
     u.save()
     u.turma.set([random.choice(turmas)])
 
-u = User(username="prof.novo", role="PROFESSOR", is_active=False)
+u = User(username="prof.novo", email="prof.novo@escola.com", role="PROFESSOR", is_active=False)
 u.set_password("senha123")
 u.save()
 
@@ -215,8 +239,8 @@ print(f"  Alunos:      {len(alunos)} ativos + 2 inativos")
 print(f"  Atividades:  {len(atividades)}")
 print(f"  Respostas:   {count}")
 print(f"\nCredenciais:")
-print(f"  admin       -> admin123  (superuser/admin)")
-print(f"  prof.silva  -> senha123  (professor)")
-print(f"  ana.souza   -> senha123  (aluno)")
+print(f"  admin@escola.com       -> admin123  (superuser/admin)")
+print(f"  silva@escola.com       -> senha123  (professor)")
+print(f"  ana.souza@escola.com   -> senha123  (aluno)")
 print(f"  Todos usam senha: senha123")
 print("=" * 50)
