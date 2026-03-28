@@ -10,14 +10,6 @@
 
 Aplicação web fullstack para gerenciamento de atividades escolares. Professores criam atividades e corrigem respostas com nota e feedback. Alunos visualizam atividades da sua turma, enviam respostas e acompanham correções. Administradores gerenciam usuários, turmas, atividades e respostas de todo o sistema.
 
-<!-- Descomente e adicione o caminho quando tiver screenshots
-## Demo
-
-| Login | Dashboard Professor | Dashboard Aluno |
-|-------|-------------------|-----------------|
-| ![Login](docs/screenshots/login.png) | ![Professor](docs/screenshots/professor.png) | ![Aluno](docs/screenshots/aluno.png) |
--->
-
 ## Stack
 
 | Camada | Tecnologia |
@@ -29,34 +21,105 @@ Aplicação web fullstack para gerenciamento de atividades escolares. Professore
 | URL Params | nuqs (search params sincronizados com a URL) |
 | Infra | Docker, Docker Compose |
 
-## Pré-requisitos
+---
+
+## Rodar com Docker (recomendado)
+
+A forma mais rápida de rodar o projeto. Não precisa instalar Python, Node.js nem PostgreSQL.
+
+### Pré-requisitos
+
+- [Docker](https://docs.docker.com/get-docker/) instalado
+- [Docker Compose](https://docs.docker.com/compose/install/) instalado (já vem com Docker Desktop no Windows/Mac)
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/seu-usuario/plataforma-escolar.git
+cd plataforma-escolar
+```
+
+### 2. Subir os containers
+
+```bash
+docker-compose up --build
+```
+
+Aguarde até ver os 3 containers rodando: `postgres_db`, `django_backend`, `react_frontend`.
+
+### 3. Criar o admin (em outro terminal)
+
+Abra um **segundo terminal** (mantenha o primeiro rodando) e execute:
+
+```bash
+docker exec -it django_backend python manage.py createsuperuser
+```
+
+Digite um email e senha quando solicitado.
+
+### 4. Popular o banco com dados de teste (opcional, mas recomendado)
+
+```bash
+docker exec -it django_backend python seed.py
+```
+
+Isso cria 8 turmas, 5 professores, 20 alunos, 15 atividades e 70 respostas prontas para testar.
+
+### 5. Acessar
+
+| Serviço | URL |
+|---------|-----|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:8000 |
+
+### 6. Credenciais de teste (após rodar seed.py)
+
+| Email | Senha | Papel |
+|-------|-------|-------|
+| admin@escola.com | admin123 | Administrador |
+| silva@escola.com | senha123 | Professor |
+| ana.souza@escola.com | senha123 | Aluno |
+
+Todos os usuários criados pelo seed usam senha `senha123`. O login é feito por **email + senha**.
+
+### Parar os containers
+
+```bash
+# No terminal onde rodou docker-compose up:
+Ctrl+C
+
+# Ou em qualquer terminal:
+docker-compose down
+
+# Para apagar o banco de dados também:
+docker-compose down -v
+```
+
+---
+
+## Rodar em Modo Desenvolvimento
+
+Para quem quer desenvolver ou modificar o código com hot reload.
+
+### Pré-requisitos
 
 - Python 3.10+
 - Node.js 20+ (Vite 8 requer 20.19+)
-- Docker e Docker Compose
 - npm
+- Docker (apenas para o PostgreSQL)
 
-## Setup Rápido
-
-### 1. Variáveis de ambiente
-
-```bash
-cp .env.example backend/.env
-```
-
-Edite `backend/.env` se necessário. Valores default funcionam para desenvolvimento local.
-
-### 2. Banco de dados
+### 1. Banco de dados
 
 ```bash
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
-### 3. Backend
+### 2. Backend
 
 ```bash
 # Criar e ativar ambiente virtual
 python -m venv venv
+
 # Windows:
 .\venv\Scripts\activate
 # Linux/Mac:
@@ -80,7 +143,7 @@ python manage.py runserver
 
 Backend disponível em `http://localhost:8000`
 
-### 4. Frontend
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -90,26 +153,24 @@ npm run dev
 
 Frontend disponível em `http://localhost:5173`
 
-### 5. Credenciais de teste (após rodar seed.py)
-
-| Email | Senha | Papel |
-|-------|-------|-------|
-| admin@escola.com | admin123 | Superuser |
-| silva@escola.com | senha123 | Professor |
-| ana.souza@escola.com | senha123 | Aluno |
-
-Todos os usuários criados pelo seed usam senha `senha123`. O login é feito por **email + senha**.
+---
 
 ## Variáveis de Ambiente
 
+Crie `backend/.env` a partir do exemplo: `cp .env.example backend/.env`
+
 | Variável | Descrição | Default |
 |----------|-----------|---------|
+| `SECRET_KEY` | Chave secreta do Django | insecure key (dev only) |
+| `DEBUG` | Modo debug | `True` |
+| `ALLOWED_HOSTS` | Hosts permitidos (separados por vírgula) | `localhost,127.0.0.1` |
+| `CORS_ALLOWED_ORIGINS` | Origens CORS permitidas (separadas por vírgula) | `http://localhost:5173` |
 | `DB_HOST` | Host do PostgreSQL | `localhost` |
 | `DB_NAME` | Nome do banco | `escola` |
 | `DB_USER` | Usuário do banco | `postgres` |
 | `DB_PASSWORD` | Senha do banco | `postgres` |
-| `SECRET_KEY` | Chave secreta do Django | insecure key (dev only) |
-| `DEBUG` | Modo debug | `True` |
+
+> **⚠️ Importante:** Em produção, gere uma `SECRET_KEY` forte, defina `DEBUG=False` e configure `ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS` com os domínios corretos.
 
 ## Estrutura do Projeto
 
@@ -162,7 +223,9 @@ plataforma-escolar/
 ├── seed.py                     # Script para popular o banco
 ├── docker-compose.yml          # Produção (backend + frontend + db)
 ├── docker-compose.dev.yml      # Desenvolvimento (apenas db)
-└── .env.example                # Variáveis de ambiente de exemplo
+├── .env.example                # Variáveis de ambiente de exemplo
+├── .gitignore                  # Arquivos ignorados pelo Git
+└── .dockerignore               # Arquivos ignorados pelo Docker build
 ```
 
 ## Endpoints da API
@@ -210,13 +273,20 @@ Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros especí
 - Alunos só podem responder atividades de turmas que pertencem.
 - Alunos podem editar sua resposta enquanto a atividade estiver ativa.
 - Professores podem corrigir (nota + feedback) a qualquer momento, mesmo após o prazo.
-- Nota deve estar entre 0 e 10.
+- Nota deve estar entre 0 e 10. Nota é obrigatória.
+- Feedback é opcional.
 - Superusers não podem ser desativados pelo endpoint de toggle.
 - O campo `is_admin` é calculado como `is_superuser AND is_active`.
 
 > Para decisões técnicas detalhadas (arquitetura, segurança, frontend), veja [docs/decisions.md](docs/decisions.md).
 
 ## Decisões Técnicas Resumidas
+
+### Segurança
+
+- **Variáveis sensíveis via `.env`** — `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS` são carregadas via `python-dotenv`, sem valores hardcoded no código
+- **`.gitignore`** impede commit de `.env`, `__pycache__/`, `node_modules/` e arquivos de IDE
+- **`.dockerignore`** evita copiar `.git`, `.env`, `node_modules/` e caches para dentro das imagens Docker
 
 ### Backend
 
@@ -237,36 +307,6 @@ Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros especí
 - **shadcn/ui (base-nova)** com tema azul customizado em oklch, dark mode via classe `.dark`
 - **Layouts separados** — professor/aluno têm sidebar própria, admin tem `AdminLayout` dedicado
 - **TurmaMultiSelect** com portal para evitar corte por overflow do Card pai
-
-## Docker (Produção)
-
-### 1. Subir os containers
-
-```bash
-docker-compose up --build
-```
-
-Aguarde até ver os 3 containers rodando (postgres_db, django_backend, react_frontend).
-
-### 2. Criar o admin (segundo terminal)
-
-```bash
-docker exec -it django_backend python manage.py createsuperuser
-```
-
-### 3. Popular o banco com dados de teste (opcional)
-
-```bash
-docker exec -it django_backend python seed.py
-```
-
-### 4. Acessar
-
-| Serviço | URL |
-|---------|-----|
-| Frontend | http://localhost:5173 |
-| Backend | http://localhost:8000 |
-| Banco | localhost:5432 |
 
 ## Comandos Úteis
 
