@@ -7,7 +7,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY manage.py ./
 COPY backend/ ./backend/
-COPY core/ ./core/
+COPY accounts/ ./accounts/
+COPY turmas/ ./turmas/
+COPY atividades/ ./atividades/
+COPY respostas/ ./respostas/
 COPY seed.py ./
 
 EXPOSE 8000

@@ -170,6 +170,12 @@ Crie `backend/.env` a partir do exemplo: `cp .env.example backend/.env`
 | `DB_USER` | Usuário do banco | `postgres` |
 | `DB_PASSWORD` | Senha do banco | `postgres` |
 
+**Frontend** (`frontend/.env`):
+
+| Variável | Descrição | Default |
+|----------|-----------|---------|
+| `VITE_API_URL` | URL base da API backend | `http://localhost:8000` |
+
 > **⚠️ Importante:** Em produção, gere uma `SECRET_KEY` forte, defina `DEBUG=False` e configure `ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS` com os domínios corretos.
 
 ## Estrutura do Projeto

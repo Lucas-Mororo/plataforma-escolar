@@ -1,15 +1,9 @@
 /**
- * Instancia configurada do Axios para comunicacao com a API.
+ * Instância configurada do Axios para comunicação com a API.
  *
- * Configuracoes:
- * - Base URL: `http://localhost:8000`
- * - Interceptor de request: injeta token JWT no header `Authorization`.
- * - Interceptor de response: trata erros 401 (token expirado/invalido).
- *
- * @remarks
- * O interceptor de response NAO faz redirect em requests para `/auth/me`.
- * Isso evita loop infinito com o `useAuthInitialize`, que trata 401
- * do `/auth/me` separadamente (limpa token sem redirect).
+ * A base URL é lida da variável de ambiente `VITE_API_URL`.
+ * Em desenvolvimento: `http://localhost:8000`
+ * Em produção: configurar no `.env` do frontend.
  *
  * @module api/axios
  */
@@ -18,12 +12,11 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth.store";
 
 const api = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: import.meta.env.VITE_API_URL,
 });
 
 /**
  * Interceptor de request: injeta token JWT.
- * Busca o token do Zustand store ou localStorage como fallback.
  */
 api.interceptors.request.use((config) => {
     const token = useAuthStore.getState().token || localStorage.getItem("token");
@@ -37,7 +30,7 @@ api.interceptors.request.use((config) => {
  * Interceptor de response: trata 401 (Unauthorized).
  *
  * - Para requests normais: faz logout + redirect para /login.
- * - Para `/auth/me`: ignora (tratado pelo useAuthInitialize).
+ * - Para `/auth/`: ignora (tratado pelo useAuthInitialize).
  */
 api.interceptors.response.use(
     (response) => response,
