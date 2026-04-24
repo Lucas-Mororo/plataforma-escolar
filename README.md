@@ -1,3 +1,7 @@
+Aqui está o README completo com todas as melhorias aplicadas:
+
+---
+
 # Plataforma Escolar
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
@@ -35,11 +39,34 @@ A forma mais rápida de rodar o projeto. Não precisa instalar Python, Node.js n
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/plataforma-escolar.git
+git clone https://github.com/lucasmartins-92/plataforma-escolar.git
 cd plataforma-escolar
 ```
 
-### 2. Subir os containers
+### 2. Configurar variáveis de ambiente
+
+**Backend** — crie o arquivo `backend/.env` com o seguinte conteúdo:
+
+```env
+SECRET_KEY=django-insecure-troque-em-producao
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+DB_HOST=db
+DB_NAME=escola
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+**Frontend** — crie o arquivo `frontend/.env` com o seguinte conteúdo:
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+> ⚠️ Esses valores são para uso local. Em produção, gere uma `SECRET_KEY` forte e defina `DEBUG=False`.
+
+### 3. Subir os containers
 
 ```bash
 docker-compose up --build
@@ -47,7 +74,7 @@ docker-compose up --build
 
 Aguarde até ver os 3 containers rodando: `postgres_db`, `django_backend`, `react_frontend`.
 
-### 3. Criar o admin (em outro terminal)
+### 4. Criar o admin (em outro terminal)
 
 Abra um **segundo terminal** (mantenha o primeiro rodando) e execute:
 
@@ -57,7 +84,7 @@ docker exec -it django_backend python manage.py createsuperuser
 
 Digite um email e senha quando solicitado.
 
-### 4. Popular o banco com dados de teste (opcional, mas recomendado)
+### 5. Popular o banco com dados de teste (opcional, mas recomendado)
 
 ```bash
 docker exec -it django_backend python seed.py
@@ -65,14 +92,14 @@ docker exec -it django_backend python seed.py
 
 Isso cria 8 turmas, 5 professores, 20 alunos, 15 atividades e 70 respostas prontas para testar.
 
-### 5. Acessar
+### 6. Acessar
 
 | Serviço | URL |
 |---------|-----|
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:8000 |
 
-### 6. Credenciais de teste (após rodar seed.py)
+### 7. Credenciais de teste (após rodar seed.py)
 
 | Email | Senha | Papel |
 |-------|-------|-------|
@@ -114,10 +141,33 @@ Para quem quer desenvolver ou modificar o código com hot reload.
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
-### 2. Backend
+### 2. Configurar variáveis de ambiente
+
+**Backend** — crie o arquivo `backend/.env` com o seguinte conteúdo:
+
+```env
+SECRET_KEY=django-insecure-troque-em-producao
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+DB_HOST=localhost
+DB_NAME=escola
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+> ⚠️ Note que `DB_HOST=localhost` é diferente do modo Docker (`DB_HOST=db`), pois aqui o banco roda direto na sua máquina.
+
+**Frontend** — crie o arquivo `frontend/.env` com o seguinte conteúdo:
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+### 3. Backend
 
 ```bash
-# Criar e ativar ambiente virtual
+# Criar e ativar ambiente virtual (rode na raiz do projeto)
 python -m venv venv
 
 # Windows:
@@ -134,7 +184,7 @@ python manage.py migrate
 # Criar admin (superuser)
 python manage.py createsuperuser
 
-# Popular banco com dados de exemplo (opcional)
+# Popular banco com dados de exemplo (opcional, rode na raiz do projeto)
 python seed.py
 
 # Iniciar servidor
@@ -143,7 +193,7 @@ python manage.py runserver
 
 Backend disponível em `http://localhost:8000`
 
-### 3. Frontend
+### 4. Frontend
 
 ```bash
 cd frontend
@@ -157,18 +207,18 @@ Frontend disponível em `http://localhost:5173`
 
 ## Variáveis de Ambiente
 
-Crie `backend/.env` a partir do exemplo: `cp .env.example backend/.env`
+**Backend** (`backend/.env`):
 
-| Variável | Descrição | Default |
-|----------|-----------|---------|
-| `SECRET_KEY` | Chave secreta do Django | insecure key (dev only) |
-| `DEBUG` | Modo debug | `True` |
-| `ALLOWED_HOSTS` | Hosts permitidos (separados por vírgula) | `localhost,127.0.0.1` |
-| `CORS_ALLOWED_ORIGINS` | Origens CORS permitidas (separadas por vírgula) | `http://localhost:5173` |
-| `DB_HOST` | Host do PostgreSQL | `localhost` |
-| `DB_NAME` | Nome do banco | `escola` |
-| `DB_USER` | Usuário do banco | `postgres` |
-| `DB_PASSWORD` | Senha do banco | `postgres` |
+| Variável | Descrição | Docker | Dev local |
+|----------|-----------|--------|-----------|
+| `SECRET_KEY` | Chave secreta do Django | insecure key | insecure key |
+| `DEBUG` | Modo debug | `True` | `True` |
+| `ALLOWED_HOSTS` | Hosts permitidos (separados por vírgula) | `localhost,127.0.0.1` | `localhost,127.0.0.1` |
+| `CORS_ALLOWED_ORIGINS` | Origens CORS permitidas (separadas por vírgula) | `http://localhost:5173` | `http://localhost:5173` |
+| `DB_HOST` | Host do PostgreSQL | `db` | `localhost` |
+| `DB_NAME` | Nome do banco | `escola` | `escola` |
+| `DB_USER` | Usuário do banco | `postgres` | `postgres` |
+| `DB_PASSWORD` | Senha do banco | `postgres` | `postgres` |
 
 **Frontend** (`frontend/.env`):
 
@@ -177,6 +227,8 @@ Crie `backend/.env` a partir do exemplo: `cp .env.example backend/.env`
 | `VITE_API_URL` | URL base da API backend | `http://localhost:8000` |
 
 > **⚠️ Importante:** Em produção, gere uma `SECRET_KEY` forte, defina `DEBUG=False` e configure `ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS` com os domínios corretos.
+
+---
 
 ## Estrutura do Projeto
 
@@ -229,10 +281,11 @@ plataforma-escolar/
 ├── seed.py                     # Script para popular o banco
 ├── docker-compose.yml          # Produção (backend + frontend + db)
 ├── docker-compose.dev.yml      # Desenvolvimento (apenas db)
-├── .env.example                # Variáveis de ambiente de exemplo
 ├── .gitignore                  # Arquivos ignorados pelo Git
 └── .dockerignore               # Arquivos ignorados pelo Docker build
 ```
+
+---
 
 ## Endpoints da API
 
@@ -272,6 +325,8 @@ plataforma-escolar/
 
 Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros específicos documentados nas docstrings de cada view.
 
+---
+
 ## Regras de Negócio
 
 - Usuários criados via registro iniciam com `is_active=false`. Um admin precisa ativá-los.
@@ -285,6 +340,8 @@ Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros especí
 - O campo `is_admin` é calculado como `is_superuser AND is_active`.
 
 > Para decisões técnicas detalhadas (arquitetura, segurança, frontend), veja [docs/decisions.md](docs/decisions.md).
+
+---
 
 ## Decisões Técnicas Resumidas
 
@@ -314,22 +371,121 @@ Todos os endpoints de listagem suportam `?page=1&page_size=10` e filtros especí
 - **Layouts separados** — professor/aluno têm sidebar própria, admin tem `AdminLayout` dedicado
 - **TurmaMultiSelect** com portal para evitar corte por overflow do Card pai
 
+---
+
+## Troubleshooting
+
+**Porta 5432 já em uso**
+Você tem PostgreSQL instalado localmente rodando na mesma porta. Pare o serviço local antes de subir o Docker:
+```bash
+# Linux/Mac:
+sudo service postgresql stop
+# Windows: pare o serviço PostgreSQL no Gerenciador de Serviços
+```
+
+**Porta 8000 ou 5173 já em uso**
+```bash
+# Descubra o processo usando a porta (ex: 8000):
+# Linux/Mac:
+lsof -i :8000
+# Windows:
+netstat -ano | findstr :8000
+# Encerre o processo ou mude a porta no docker-compose.yml
+```
+
+**Container não sobe / erro de permissão no banco**
+O volume do PostgreSQL pode estar corrompido de uma execução anterior. Apague e recrie:
+```bash
+docker-compose down -v
+docker-compose up --build
+```
+
+**Erro de CORS no frontend**
+Verifique se `CORS_ALLOWED_ORIGINS` no `backend/.env` contém exatamente a origem do frontend, sem barra no final:
+```env
+CORS_ALLOWED_ORIGINS=http://localhost:5173  # correto
+CORS_ALLOWED_ORIGINS=http://localhost:5173/ # errado
+```
+
+**Token expirado / usuário deslogado inesperadamente**
+O access token JWT expira em 5 minutos por padrão. O frontend renova automaticamente via refresh token. Se o problema persistir, limpe o `localStorage` do navegador e faça login novamente.
+
+**Usuário não consegue logar após registro**
+Por regra de negócio, novos usuários iniciam inativos. Um administrador precisa ativá-los em **Gerenciar Usuários** no painel admin.
+
+**`python seed.py` retorna erro de módulo não encontrado**
+O script deve ser executado na raiz do projeto com o ambiente virtual ativado:
+```bash
+# Certifique-se de estar na raiz:
+cd plataforma-escolar
+source venv/bin/activate  # ou .\venv\Scripts\activate no Windows
+python seed.py
+```
+
+---
+
 ## Comandos Úteis
 
+### Backend
+
 ```bash
-# Migrations
+# Criar e aplicar migrations
 python manage.py makemigrations
 python manage.py migrate
 
-# Popular banco com dados de teste
+# Popular banco com dados de teste (rodar na raiz do projeto)
 python seed.py
 
-# Build do frontend
-cd frontend && npm run build
-
-# Resetar banco (remove volume do Docker)
-docker-compose -f docker-compose.dev.yml down -v
+# Criar superusuário
+python manage.py createsuperuser
 ```
+
+### Frontend
+
+```bash
+# Instalar dependências
+cd frontend && npm install
+
+# Build de produção
+cd frontend && npm run build
+```
+
+### Docker
+
+```bash
+# Subir containers
+docker-compose up --build
+
+# Parar containers sem apagar dados
+docker-compose down
+
+# Resetar banco (apaga volume)
+docker-compose down -v
+
+# Ver logs de um container específico
+docker logs django_backend
+docker logs react_frontend
+```
+
+---
+
+## Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Faça um fork do repositório
+2. Crie uma branch para sua feature: `git checkout -b feature/minha-feature`
+3. Faça commit das suas alterações: `git commit -m 'feat: minha feature'`
+4. Envie para o seu fork: `git push origin feature/minha-feature`
+5. Abra um Pull Request descrevendo o que foi feito
+
+---
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
+
+---
 
 ## Autor
 
